@@ -1,0 +1,77 @@
+*&---------------------------------------------------------------------*
+*& Report ZJAT_FIRSTP
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZJAT_FIRSTP.
+TABLES ZJAT_HSALES.
+
+  DATA:lv_id type VBELN.
+
+
+SELECTION-SCREEN begin of block a with FRAME TITLE text-000.
+
+  select-options s_id for lv_id OBLIGATORY.
+
+  SELECTION-SCREEN end of block a.
+
+*parameters: p_ordid type vblen.
+
+data:
+      ls_sales type ZJAT_HSALES,
+      lt_sales type table of ZJAT_HSALES,
+      ls_item type ZJAT_ISALES,
+      lt_item type table of ZJAT_ISALES,
+      ls_final type ZJAT_FINAL,
+      lt_final type table of ZJAT_FINAL.
+
+START-OF-SELECTION.
+
+"READ TABLE ZJAT_HSALES INTO
+*SELECT SINGLE * from ZJAT_HSALES into ls_sales where ORDID eq p_ordid.
+select * from ZJAT_HSALES into TABLE lt_sales where ordid in s_id.
+
+  "for all Entries.
+IF lt_sales is not INITIAL.
+
+select * from ZJAT_ISALES into table lt_item
+   FOR ALL ENTRIES IN lt_sales
+   where ORDID = lt_sales-ORDID.
+
+
+   IF sy-subrc eq 0.
+
+   LOOP AT lt_sales into ls_sales.
+   ls_final-ORDID = ls_sales-ORDID.
+   ls_final-NAME = ls_sales-NAME.
+   ls_final-CITY = ls_sales-CITY.
+
+
+*   READ TABLE lt_item into ls_item with key ordid = ls_sales-ordid.
+
+loop at lt_item into ls_item where ordid = ls_sales-ordid.
+   IF sy-subrc eq 0.
+   ls_final-ITEM      = ls_item-ITEM.
+   ls_final-RNAME     = ls_item-RNAME.
+   ls_final-ITEMNAME  = ls_item-ITEMNAME.
+   ls_final-CDATA     = ls_item-CDATA.
+   ls_final-CTIME     = ls_item-CTIME.
+   ls_final-AMOUNT    = ls_item-AMOUNT.
+ENDIF.
+ENDLOOP.
+ENDLOOP.
+   ENDIF.
+   write: / ls_final-ORDID,
+            ls_final-NAME,
+            ls_final-CITY,
+            ls_final-ITEM,
+            ls_final-RNAME,
+            ls_final-ITEMNAME,
+            ls_final-CDATA,
+            ls_final-CTIME,
+            ls_final-AMOUNT.
+
+  clear : ls_sales.
+  clear : ls_item.
+*   ENDLOOP.
+  ENDIF.
