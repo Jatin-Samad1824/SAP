@@ -1,0 +1,57 @@
+*&---------------------------------------------------------------------*
+*& Report ZJAT_INTABLE_OPP
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZJAT_INTABLE_OPP.
+
+DATA: lt_tab TYPE TABLE OF ZJAT_HSALES,
+      ls_tab type ZJAT_HSALES.
+
+"Internal Table Operations.
+
+"1.Append Operations.
+ls_tab-ordid = '3'.
+ls_tab-name = 'Jatin Samad'.
+ls_tab-city = 'Rourkela'.
+APPEND ls_tab to lt_tab.
+clear ls_tab.
+
+ls_tab-ordid = '4'.
+ls_tab-name = 'Ronaldo'.
+ls_tab-city = 'Portugal'.
+APPEND ls_tab to lt_tab.
+clear ls_tab.
+
+ls_tab-ordid = '5'.
+ls_tab-name = 'Messi'.
+ls_tab-city = 'Argentina'.
+APPEND ls_tab to lt_tab.
+clear ls_tab.
+
+ls_tab-ordid = '6'.
+ls_tab-name = 'Dhoni'.
+ls_tab-city = 'Ranchi'.
+APPEND ls_tab to lt_tab.
+clear ls_tab.
+
+ls_tab-ordid = '7'.
+ls_tab-name = 'Rohit'.
+ls_tab-city = 'Mumbai'.
+APPEND ls_tab to lt_tab.
+clear ls_tab.
+
+ls_tab-ordid = '8'.
+ls_tab-name = 'Rahul'.
+ls_tab-city = 'Banglore'.
+APPEND ls_tab to lt_tab.
+clear: ls_tab, lt_tab.
+
+LOOP at lt_tab INTO ls_tab.
+  if sy-subrc eq 0.
+  WRITE: ls_tab-ordid, ls_tab-name, ls_tab-city.
+  endif.
+  ENDLOOP.
+
+
+  BREAK-POINT.
