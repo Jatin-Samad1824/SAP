@@ -1,0 +1,69 @@
+*&---------------------------------------------------------------------*
+*& Report ZCNTRL_BREAKS
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+report zcntrl_breaks.
+
+data:lv_ordid type zordid.
+
+selection-screen begin of block a with frame title text-000.
+
+select-options s_ordid for lv_ordid.
+
+selection-screen end of block a.
+
+types: begin of st_isales,
+         ordid    type zordid,
+         item     type posnr,
+         rname    type name,
+         itemname type  desc,
+         amount   type dmbtr,
+       end of st_isales.
+
+
+data:lt_item type table of st_isales,
+     ls_item type st_isales,
+     ls_dummy type st_isales.
+
+
+start-of-selection.
+
+  select  ORDID
+          ITEM
+          RNAME
+          ITEMNAME
+          Amount from zisales into table lt_item
+    where ordid in s_ordid.
+
+    IF sy-subrc eq 0.
+
+    LOOP AT lt_item into ls_item."ASSIGNING FIELD-SYMBOL(ls_dummy).
+
+      ls_dummy = ls_item.
+
+     at FIRST.  "First record of internal table.
+
+     write:/ 'This is first record',ls_dummy-ordid,ls_dummy-ITEM,ls_dummy-RNAME,ls_dummy-ITEMNAME,ls_dummy-Amount.
+
+       endat.
+
+      at last. "It will trigger for last record of the internal table.
+
+        write:/ 'This is last record',ls_dummy-ordid,ls_dummy-ITEM,ls_dummy-RNAME,ls_dummy-ITEMNAME,ls_dummy-Amount.
+
+        endat.
+
+
+*    at new ordid.
+*
+*       write:/ ,ls_dummy-ordid,ls_dummy-ITEM,ls_dummy-RNAME,ls_dummy-ITEMNAME,ls_dummy-Amount.
+*      endat.
+
+*   at END OF ordid.
+*   write:/ ls_dummy-ordid,ls_dummy-ITEM,ls_dummy-RNAME,ls_dummy-ITEMNAME,ls_dummy-Amount.
+*      endat.
+
+    ENDLOOP.
+
+    ENDIF.
