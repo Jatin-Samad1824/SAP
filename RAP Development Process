@@ -1,0 +1,110 @@
+Step1-Create Database Table
+DATABASE TABLE NAME-ZSTUDENT_DETAILS
+@EndUserText.label : 'Student Details'
+@AbapCatalog.enhancement.category : #EXTENSIBLE_ANY
+@AbapCatalog.tableCategory : #TRANSPARENT
+@AbapCatalog.deliveryClass : #A
+@AbapCatalog.dataMaintenance : #ALLOWED
+define table zjat_student {
+
+  key id : sysuuid_x16 not null;
+  fname  : abap.char(40);
+  lname  : abap.char(40);
+  city   : abap.char(40);
+  age    : abap.numc(4);
+  course : abap.char(50);
+  status : abap_boolean;
+
+}
+------------------------------------------------------------------------------
+
+Step2-Create Interface View
+INTERFACE VIEW NAME-ZSTUDENT_IV
+@AbapCatalog.sqlViewName: 'YSTUDENT_IV'           //Note-IV Name & View Must be Differnt
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Interface View on Student Details'
+@Metadata.ignorePropagatedAnnotations: true
+define root view ZSTUDENT_IV as select from zjat_student
+{
+    key id as Id,
+    fname as Fname,
+    lname as Lname,
+    city as City,
+    age as Age,
+    course as Course,
+    status as Status
+}
+--------------------------------------------------------------------------------
+
+Step3-Create Consumption View
+CONSUMPTION VIEW NAME-ZSTUDENT_CONSUMPTION
+@AbapCatalog.viewEnhancementCategory: [#NONE]
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Consumption View On Students Details'
+@Metadata.ignorePropagatedAnnotations: true
+@Metadata.allowExtensions: true
+define root view entity ZSTUDENT_CONSUMPTION as select from ZSTUDENT_IV
+{
+    @EndUserText.label: 'Student Id'
+    key Id,
+    @EndUserText.label: 'First Name'
+    Fname,
+    @EndUserText.label: 'Last Name'
+    Lname,
+    @EndUserText.label: 'City Name'
+    City,
+    @EndUserText.label: 'Age'
+    Age,
+    @EndUserText.label: 'Course Name'
+    Course,
+    @EndUserText.label: 'Status'
+    Status
+}
+---------------------------------------------------------------------
+
+Step4-Metadata Extension File
+METADATA EXTENSION NAME-ZSTUDENT_METADATA
+@Metadata.layer: #PARTNER
+@UI:{
+        headerInfo : { typeName: 'Student',
+                       typeNamePlural: 'Students',
+                       title : { type: #STANDARD,
+                                 label: 'Student',
+                                 value: 'Id'
+                       }
+        }
+        }
+annotate view ZSTUDENT_CONSUMPTION
+    with 
+{
+
+@UI.facet:[ {  id : 'Student',
+               purpose : #STANDARD,
+               type : #IDENTIFICATION_REFERENCE,
+               label : 'Student',
+               position : 10 } ]
+@UI: { lineItem: [ { position: 10, label: 'Std Id'} ], 
+ identification: [ { position: 10, label: 'Std Id' } ]}
+    Id;
+@UI: { lineItem: [ { position: 20, label: 'Fname'} ], 
+ identification: [ { position: 20, label: 'Fname' } ]}
+    Fname;
+@UI: { lineItem: [ { position: 30, label: 'Lname'} ], 
+ identification: [ { position: 30, label: 'Lname' } ]}
+    Lname;
+@UI: { lineItem: [ { position: 40, label: 'City'} ], 
+ identification: [ { position: 40, label: 'City' } ]}
+    City;
+@UI: { lineItem: [ { position: 50, label: 'Age'} ], 
+ identification: [ { position: 50, label: 'Age' } ]}
+    Age;
+@UI: { lineItem: [ { position: 60, label: 'Course'} ], 
+ identification: [ { position: 60, label: 'Course' } ]}
+    Course;
+@UI: { lineItem: [ { position: 70, label: 'Status'} ], 
+ identification: [ { position: 70, label: 'Status' } ]}
+    Status;
+    
+}
